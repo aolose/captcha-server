@@ -1,0 +1,30 @@
+#server
+addr: 127.0.0.1:9002
+backend: 127.0.0.1:8899
+
+
+#client
+expire: 30
+max: 5e4
+wait: 300
+block: 2
+conns: 0
+
+#captcha
+font: ./font.ttf
+width: 150
+height: 50
+length: 5
+noise: 1
+curve: 4
+background: 0xffffff
+dpi: 60
+colors:
+  - 0x06d6a0
+  - 0x118ab2
+  - 0x073b4c
+  - 0xef476f
+  - 0x708d81
+  - 0x723d46
+  - 0x3d405b
+  - 0xe07a5f
