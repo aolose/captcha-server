@@ -137,6 +137,7 @@ func Check(key int64, code, ip string) (int64, *captcha.Data) {
 					left--
 					if code != "" {
 						if strings.ToLower(code) == strings.ToLower(c) {
+							delete(block, ip)
 							return 0, nil
 						}
 						fail(ip)
