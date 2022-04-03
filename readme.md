@@ -4,12 +4,12 @@
 ![](0.png)
 
 
-### config 
+### cfg.yml config 
 
 ```yaml
 #server
 #listen addr
-addr: 127.0.0.1:9002
+addr: 127.0.0.1:9001
 #forward request to backend
 backend: 127.0.0.1:8899
 
@@ -47,4 +47,34 @@ colors:
   - 0x3d405b
   - 0xe07a5f
 ```
-                            
+             
+
+### usage   
+```bash
+captcha-serv -cfg /xxx/cfg.yml
+```
+
+### Caddyfile example
+todo
+```
+example.com {
+   @is_captcha {
+   
+   }
+   
+   @captcha_forward {
+   
+   
+   }
+   
+   reverse_proxy @is_captcha /captcha 127.0.0.1:9001 {
+   
+   }
+   
+   reverse_proxy @captcha_forward /api 127.0.0.1:9001 {
+   
+   }
+   
+   reverse_proxy  @other_api  backend 
+}
+```

@@ -7,7 +7,6 @@ import (
 	"github.com/steambap/captcha"
 	"github.com/valyala/fasthttp"
 	"log"
-	"net"
 	"os"
 	"strconv"
 	"strings"
@@ -136,12 +135,6 @@ func serverHandler(ctx *fasthttp.RequestCtx) {
 	ctx.SetStatusCode(404)
 }
 
-var ln net.Listener
-
-func initServer() {
-	start()
-}
-
 var ch = make(chan int, 1)
 
 func start() {
@@ -163,10 +156,12 @@ func start() {
 	<-ch
 }
 func stop() {
+	if server == nil {
+		return
+	}
 	ch <- 1
 	err := server.Shutdown()
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 }

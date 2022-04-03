@@ -109,10 +109,11 @@ func loadCfg() {
 }
 
 func main() {
+	loadCfg()
 	go func() {
 		for {
-			loadCfg()
 			time.Sleep(expire / 2)
+			loadCfg()
 		}
 	}()
 	go func() {
@@ -121,6 +122,5 @@ func main() {
 			time.Sleep(time.Duration(cfg.Wait/2) * time.Second)
 		}
 	}()
-	initServer()
 	select {}
 }
