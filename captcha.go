@@ -122,13 +122,15 @@ func Check(key int64, code, ip string) (int64, *captcha.Data) {
 		return -1, nil
 	}
 	bf := -1
-	for i := end / 2; i != bf && i < end && i > -1; {
+	s := 0
+	e := end
+	for i := (e - s) / 2; i != bf && i < e && i >= s; {
 		bf = i
 		k := keys[i]
 		if k < key {
-			i++
+			s = i
 		} else if k > key {
-			i--
+			e = i
 		} else {
 			if ip == ips[i] {
 				c := codes[i]
@@ -146,6 +148,7 @@ func Check(key int64, code, ip string) (int64, *captcha.Data) {
 				}
 			}
 		}
+		i = (e - s) / 2
 	}
 	return generate(ip)
 }
