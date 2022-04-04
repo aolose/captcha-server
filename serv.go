@@ -123,7 +123,13 @@ func loadFont() {
 
 func serverHandler(ctx *fasthttp.RequestCtx) {
 	n := time.Now().UnixMilli()
-	defer func() { log.Printf("%dms\t%s %s\n", time.Now().UnixMilli()-n, ctx.Method(), ctx.Path()) }()
+	defer func() {
+		log.Printf(
+			"%dms\t%s %s\n",
+			time.Now().UnixMilli()-n,
+			ctx.Method(),
+			ctx.Path())
+	}()
 	code := getCode(ctx)
 	if code == "" {
 		if ctx.Method()[0] == 'G' {

@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/steambap/captcha"
-	"log"
 	"strings"
 	"sync"
 	"time"
@@ -177,8 +176,6 @@ func generate(ip string) (int64, *captcha.Data) {
 	if blocked(ip) {
 		return -1, nil
 	}
-	log.Println("generate start", time.Now())
-	defer func() { log.Println("generate end", time.Now()) }()
 	if left < end/2 {
 		clean()
 	}
