@@ -1,11 +1,11 @@
 #server
 addr: 127.0.0.1:9001
-backend: 127.0.0.1:8899
-forward_host: true
+backend: 127.0.0.1:9001
+forward_host: false
 
 #client
 expire: 30
-max: 5e4
+max: 1e4
 wait: 300
 block: 6
 conns: 0
