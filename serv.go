@@ -94,6 +94,7 @@ func forward(ctx *fasthttp.RequestCtx) {
 			}
 			req.Header.SetHost(host)
 		}
+		log.Printf("[forward] %s %s", req.Host(), req.RequestURI())
 		err := cli.Do(req, resp)
 		if err != nil {
 			ctx.SetStatusCode(500)
