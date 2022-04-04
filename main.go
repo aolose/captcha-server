@@ -14,9 +14,9 @@ var config = "./cfg.yml"
 func init() {
 	flag.StringVar(
 		&config,
-		"config",
+		"cfg",
 		config,
-		"config file")
+		"config file path")
 
 }
 
@@ -37,7 +37,8 @@ type Cfg struct {
 	Dpi         float64
 	Background  uint32
 	Colors      []uint32
-	ForwardHost bool `yaml:"forward_host"`
+	ForwardHost bool   `yaml:"forward_host"`
+	CharPreset  string `yaml:"char_preset"`
 }
 
 func getColor(c uint32) color.RGBA {

@@ -32,6 +32,7 @@ func reset() {
 }
 
 func opt(opt *captcha.Options) {
+	opt.CharPreset = cfg.CharPreset
 	opt.BackgroundColor = cfg.getBackground()
 	opt.FontDPI = cfg.Dpi
 	opt.Palette = cfg.getColors()

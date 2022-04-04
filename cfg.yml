@@ -11,6 +11,7 @@ block: 6
 conns: 0
 
 #captcha
+char_preset: 0123456789abcdefghjkmnopqrstuwxyzABCDEFGHIJKLMNPQRSTXYVZ
 font: ./font.ttf
 width: 150
 height: 50

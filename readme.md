@@ -22,12 +22,15 @@ expire: 30
 #request queue count
 max: 5e4
 #mini block time (second)
-#It will increases as consecutive failures increases
+#It will increases as try times increases
 wait: 300
-#failed times allow
+#try times allow
 block: 6
 
 #captcha
+#random char from char_preset
+char_preset: 0123456789abcdef
+#text front 
 font: ./font.ttf
 #image width
 width: 150
