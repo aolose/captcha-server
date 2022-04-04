@@ -56,27 +56,34 @@ colors:
 captcha-serv -cfg /xxx/cfg.yml
 ```
 
-### Caddyfile example
-todo
+### caddy example
+demo https://captcha.ivi.cx/
+
+Caddyfile:
 ```
-example.com {
-   @is_captcha {
-   
-   }
-   
-   @captcha_forward {
-   
-   
-   }
-   
-   reverse_proxy @is_captcha /captcha 127.0.0.1:9001 {
-   
-   }
-   
-   reverse_proxy @captcha_forward /api 127.0.0.1:9001 {
-   
-   }
-   
-   reverse_proxy  @other_api  backend 
+captcha.ivi.cx {
+    @captcha {
+          path /captcha
+          method GET
+          header !x-captcha-code
+    }
+    @hi {
+        path /hi
+        header x-captcha-code *
+        header x-captcha-key *
+        method POST
+    }
+
+    file_server / {
+      root /root/www
+      index index.html
+    }
+
+    reverse_proxy @captcha 127.0.0.1:9001
+    reverse_proxy @hi 127.0.0.1:9001
+}
+
+http://127.0.0.1:9002 {
+ respond "{\"data\":\"Hello world!\"}" 200
 }
 ```
