@@ -14,7 +14,6 @@ import (
 	"time"
 )
 
-var begin = time.Now().UnixNano()
 var server *fasthttp.Server
 
 func getIp(ctx *fasthttp.RequestCtx) string {
@@ -44,7 +43,7 @@ func getKey(ctx *fasthttp.RequestCtx) int64 {
 	}
 	i, err := strconv.ParseInt(k, 36, 64)
 	if err == nil {
-		return i + begin
+		return i
 	}
 	return 0
 }
@@ -58,7 +57,7 @@ func getCode(ctx *fasthttp.RequestCtx) string {
 }
 
 func fmtKey(key int64) string {
-	return strconv.FormatInt(key-begin, 36)
+	return strconv.FormatInt(key, 36)
 }
 func code64(code *captcha.Data) string {
 	emptyBuff := bytes.NewBuffer(nil)
@@ -133,7 +132,7 @@ func serverHandler(ctx *fasthttp.RequestCtx) {
 		}
 	} else {
 		key := getKey(ctx)
-		if key > begin {
+		if key > 0 {
 			nKey, nCode := Check(key, code, getIp(ctx))
 			switch nKey {
 			case 0:

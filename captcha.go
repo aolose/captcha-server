@@ -8,25 +8,43 @@ import (
 	"time"
 )
 
+var begin = time.Now().UnixNano()
 var listLock sync.Mutex
 var blockLock sync.Mutex
-var expire = time.Duration(cfg.Expire) * time.Second
-var max = cfg.Max
-var keys = make([]int64, max)
-var codes = make([]string, max)
-var ips = make([]string, max)
-var left = 0
-var end = 0
 
-var exp int64 = 0
+var max int
+var keys []int64
+var codes []string
+var ips []string
+var left int
+var end int
+var exp int64
+var nextClean time.Time
 
 var block = make(map[string][2]int64)
 
+func setNextClean() {
+	n := cfg.Expire / 2
+	if n < 1 {
+		n = 1
+	}
+	nextClean = time.Now().Add(time.Duration(n) * time.Second)
+}
+
+func getExpire() int64 {
+	return time.Second.Nanoseconds() * int64(cfg.Expire)
+}
+
+var expire = getExpire()
+
 func reset() {
-	expire = time.Duration(cfg.Expire) * time.Second
+	expire = getExpire()
 	_max := max
 	max = cfg.Max
-	if _max != max {
+	if max < 0 {
+		max = 1
+	}
+	if _max != max || keys == nil {
 		clean()
 	}
 }
@@ -40,9 +58,11 @@ func opt(opt *captcha.Options) {
 	opt.CurveNumber = cfg.Curve
 	opt.TextLength = cfg.Length
 }
+
 func clean() {
+	setNextClean()
+	exp = time.Now().UnixNano() - begin - expire
 	listLock.Lock()
-	exp = time.Now().Add(-expire).UnixNano()
 	end = 0
 	var _q = make([]int64, max)
 	var _a = make([]string, max)
@@ -54,7 +74,7 @@ func clean() {
 	}
 	for i := 0; i < m; i++ {
 		k := keys[i]
-		if k < exp {
+		if exp > k {
 			break
 		}
 		v := codes[i]
@@ -115,17 +135,17 @@ func blocked(ip string) bool {
 }
 
 func Check(key int64, code, ip string) (int64, *captcha.Data) {
-	if key < exp {
+	if exp > key || left == 0 {
 		return generate(ip)
 	}
 	if blocked(ip) {
 		return -1, nil
 	}
-	bf := -1
-	s := 0
+	s := -1
 	e := end
-	for i := (e - s) / 2; i != bf && i < e && i >= s; {
-		bf = i
+	b := s
+	for i := (e + s) / 2; i != b && i < e && i > s; {
+		b = i
 		k := keys[i]
 		if k < key {
 			s = i
@@ -148,7 +168,7 @@ func Check(key int64, code, ip string) (int64, *captcha.Data) {
 				}
 			}
 		}
-		i = (e - s) / 2
+		i = (e + s) / 2
 	}
 	return generate(ip)
 }
@@ -172,7 +192,7 @@ func generate(ip string) (int64, *captcha.Data) {
 		copy(ips[1:], ips)
 		end--
 	}
-	k := time.Now().UnixNano()
+	k := time.Now().UnixNano() - begin
 	v := generateCode()
 	keys[end] = k
 	codes[end] = v.Text

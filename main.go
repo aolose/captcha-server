@@ -117,8 +117,16 @@ func loadCfg() {
 func main() {
 	go func() {
 		for {
-			cleanBlock()
 			time.Sleep(time.Duration(cfg.Wait/2) * time.Second)
+			cleanBlock()
+		}
+	}()
+	go func() {
+		for {
+			time.Sleep(time.Second)
+			if time.Now().After(nextClean) {
+				clean()
+			}
 		}
 	}()
 	for {
