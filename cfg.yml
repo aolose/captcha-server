@@ -1,13 +1,13 @@
 #server
 addr: 127.0.0.1:9001
 backend: 127.0.0.1:9002
-
+forward_host: true
 
 #client
 expire: 30
 max: 5e4
 wait: 300
-block: 2
+block: 6
 conns: 0
 
 #captcha

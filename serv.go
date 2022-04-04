@@ -7,6 +7,7 @@ import (
 	"github.com/steambap/captcha"
 	"github.com/valyala/fasthttp"
 	"log"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -85,7 +86,14 @@ func forward(ctx *fasthttp.RequestCtx) {
 			Addr: cfg.Backend,
 		}
 		req.SetRequestURIBytes(ctx.Request.RequestURI())
-		req.Header.SetHostBytes(ctx.Request.Host())
+		if !cfg.ForwardHost {
+			host := cfg.Backend
+			u, _ := url.Parse(host)
+			if u != nil {
+				host = u.Host
+			}
+			req.Header.SetHost(host)
+		}
 		err := cli.Do(req, resp)
 		if err != nil {
 			ctx.SetStatusCode(500)
@@ -135,31 +143,22 @@ func serverHandler(ctx *fasthttp.RequestCtx) {
 	ctx.SetStatusCode(404)
 }
 
-var ch = make(chan int, 1)
-
 func start() {
-	go func() {
-		server = &fasthttp.Server{
-			MaxConnsPerIP:                 cfg.Conns,
-			Handler:                       serverHandler,
-			Name:                          "Captcha Service",
-			DisableHeaderNamesNormalizing: true,
-			ReadTimeout:                   5 * time.Second, // important
-			IdleTimeout:                   0,
-		}
-		log.Printf("Server run at %s", cfg.Addr)
-		err := server.ListenAndServe(cfg.Addr)
-		if err != nil {
-			log.Fatalln(err)
-		}
-	}()
-	<-ch
+	server = &fasthttp.Server{
+		MaxConnsPerIP:                 cfg.Conns,
+		Handler:                       serverHandler,
+		Name:                          "Captcha Service",
+		DisableHeaderNamesNormalizing: true,
+		ReadTimeout:                   5 * time.Second, // important
+		IdleTimeout:                   0,
+	}
+	log.Printf("Server run at %s", cfg.Addr)
+	err := server.ListenAndServe(cfg.Addr)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
 func stop() {
-	if server == nil {
-		return
-	}
-	ch <- 1
 	err := server.Shutdown()
 	if err != nil {
 		log.Fatalln(err)

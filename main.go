@@ -21,22 +21,23 @@ func init() {
 }
 
 type Cfg struct {
-	Expire     int
-	Max        int
-	Wait       int
-	Conns      int
-	Block      int
-	Font       string
-	Addr       string
-	Backend    string
-	Width      float64
-	Height     float64
-	Length     int
-	Noise      float64
-	Curve      int
-	Dpi        float64
-	Background uint32
-	Colors     []uint32
+	Expire      int
+	Max         int
+	Wait        int
+	Conns       int
+	Block       int
+	Font        string
+	Addr        string
+	Backend     string
+	Width       float64
+	Height      float64
+	Length      int
+	Noise       float64
+	Curve       int
+	Dpi         float64
+	Background  uint32
+	Colors      []uint32
+	ForwardHost bool `yaml:"forward_host"`
 }
 
 func getColor(c uint32) color.RGBA {
@@ -73,22 +74,23 @@ func (c *Cfg) getBackground() color.Color {
 }
 
 var cfg = Cfg{
-	Addr:       "localhost:9001",
-	Backend:    "",
-	Conns:      0,
-	Expire:     30,
-	Max:        1e4,
-	Wait:       30,
-	Block:      6,
-	Font:       "",
-	Width:      150,
-	Height:     50,
-	Length:     4,
-	Noise:      1,
-	Curve:      1,
-	Background: 0xffffff,
-	Dpi:        70,
-	Colors:     nil,
+	ForwardHost: false,
+	Addr:        "localhost:9001",
+	Backend:     "",
+	Conns:       0,
+	Expire:      30,
+	Max:         1e4,
+	Wait:        30,
+	Block:       6,
+	Font:        "",
+	Width:       150,
+	Height:      50,
+	Length:      4,
+	Noise:       1,
+	Curve:       1,
+	Background:  0xffffff,
+	Dpi:         70,
+	Colors:      nil,
 }
 
 func loadCfg() {
@@ -102,25 +104,24 @@ func loadCfg() {
 	}
 	loadFont()
 	reset()
-	if _addr != cfg.Addr {
+	if server == nil {
+		go start()
+	} else if _addr != cfg.Addr {
 		stop()
-		start()
+		time.Sleep(time.Second)
+		go start()
 	}
 }
 
 func main() {
-	loadCfg()
-	go func() {
-		for {
-			time.Sleep(expire / 2)
-			loadCfg()
-		}
-	}()
 	go func() {
 		for {
 			cleanBlock()
 			time.Sleep(time.Duration(cfg.Wait/2) * time.Second)
 		}
 	}()
-	select {}
+	for {
+		loadCfg()
+		time.Sleep(10 * time.Second)
+	}
 }
