@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>debug</title>
+</head>
+<body>
+<div>
+    <img id="a" height="100" width="300" alt="" src=""/>
+</div>
+<input id="b" type="text" placeholder="code"/>
+<button id="c">Submit</button>
+<div>
+    <pre id="d"></pre>
+</div>
+<script>
+    function captcha() {
+        fetch('/captcha', {
+            method: 'GET',
+            headers: {
+                'x-captcha-key': key
+            }
+        }).then(r => r.json()).then(d => {
+            img.src = d.data;
+            key = d.key;
+        })
+    }
+
+    let key = ''
+    const img = document.getElementById('a')
+    captcha();
+    img.onclick = captcha
+    document.getElementById('c').onclick = function () {
+        const v = document.getElementById('d')
+        v.innerText = ''
+        let code
+        fetch('/hi', {
+            method: 'POST',
+            headers: {
+                'x-captcha-key': key,
+                'x-captcha-code': document.getElementById('b').value
+            }
+        }).then(r => {
+            code = r.status;
+            return r.text()
+        }).then(d => {
+            try {
+                d = JSON.parse(d)
+            } catch (e) {
+                debugger
+            }
+            if (code === 401) {
+                key = d.key
+                img.src = d.data
+            } else v.innerText = d ? JSON.stringify(d, ' ', ' ') : code
+        }).catch(e => {
+            v.innerText = e.toString()
+        })
+    }
+</script>
+</body>
+</html>
