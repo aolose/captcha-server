@@ -1,6 +1,6 @@
 #server
 addr: 127.0.0.1:9001
-backend: 127.0.0.1:9001
+backend: 127.0.0.1:9002
 forward_host: false
 
 #client
