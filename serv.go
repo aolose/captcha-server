@@ -141,6 +141,7 @@ func serverHandler(ctx *fasthttp.RequestCtx) {
 			}
 		}
 	}
+	log.Printf("[request header] %v", ctx.Request.Header.Header())
 	ctx.SetStatusCode(404)
 }
 
