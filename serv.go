@@ -39,6 +39,9 @@ func getHeader(ctx *fasthttp.RequestCtx, key string) string {
 
 func getKey(ctx *fasthttp.RequestCtx) int64 {
 	k := getHeader(ctx, "x-captcha-key")
+	if k == "" {
+		k = getHeader(ctx, "X-Captcha-Key")
+	}
 	i, err := strconv.ParseInt(k, 36, 64)
 	if err == nil {
 		return i + begin
@@ -47,7 +50,11 @@ func getKey(ctx *fasthttp.RequestCtx) int64 {
 }
 
 func getCode(ctx *fasthttp.RequestCtx) string {
-	return getHeader(ctx, "x-captcha-code")
+	c := getHeader(ctx, "x-captcha-code")
+	if c == "" {
+		c = getHeader(ctx, "X-Captcha-Code")
+	}
+	return c
 }
 
 func fmtKey(key int64) string {
@@ -81,7 +88,9 @@ func forward(ctx *fasthttp.RequestCtx) {
 		req.SetBodyRaw(ctx.PostBody())
 		req.SetHostBytes(ctx.Host())
 		req.Header.Del("x-captcha-key")
+		req.Header.Del("X-Captcha-Key")
 		req.Header.Del("x-captcha-code")
+		req.Header.Del("X-Captcha-Code")
 		cli := fasthttp.HostClient{
 			Addr: cfg.Backend,
 		}
@@ -141,7 +150,6 @@ func serverHandler(ctx *fasthttp.RequestCtx) {
 			}
 		}
 	}
-	log.Printf("[request header] %v", ctx.Request.Header.Header())
 	ctx.SetStatusCode(404)
 }
 
