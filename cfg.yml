@@ -1,6 +1,6 @@
 #server
 addr: 127.0.0.1:9001
-backend: 127.0.0.1:9002
+backend: 127.0.0.1:8899
 forward_host: true
 
 #client
@@ -14,7 +14,7 @@ conns: 0
 font: ./font.ttf
 width: 150
 height: 50
-length: 5
+length: 4
 noise: 1
 curve: 4
 background: 0xffffff

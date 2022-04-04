@@ -12,6 +12,8 @@
 addr: 127.0.0.1:9001
 #forward request to backend
 backend: 127.0.0.1:8899
+#forward host from header
+forward_host: false
 
 
 #client
