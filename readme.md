@@ -1,11 +1,16 @@
-# A captcha server
+# Captcha Server
+A middleware server that warps https://github.com/steambap/captcha .
+
 
 
 ![](0.png)
 
 
-### cfg.yml config 
+### config
+The configuration file is not required.
+Once you captcha-serv is running, it will check the config file every 10 seconds, you won't need restart service.
 
+Here is the example of a config file:
 ```yaml
 #server
 #listen addr
