@@ -65,7 +65,6 @@ captcha-serv -cfg /xxx/cfg.yml
 ```
 
 ### caddy example
-demo https://captcha.ivi.cx/
 
 Caddyfile:
 ```
